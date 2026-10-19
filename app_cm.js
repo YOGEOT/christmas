@@ -3257,18 +3257,33 @@ function updatePrice() {
     // 파츠 + 토핑 가격만 합산
     partPrice += toppingPrice;
 
-    // 키캡 모양 추가 가격
-    let keycapShapePrice = 0;
+    // ============================================================
+// 키캡 모양 추가 가격
+// - 슬롯별 선택 상태를 기준으로 매번 새로 계산
+// - 7번 전용 키캡은 7번 슬롯에서만 추가금 적용
+// ============================================================
 
-    for (let i = 0; i < selectedKeycapShapes.length; i++) {
+let keycapShapePrice = 0;
 
-        const shapeName = selectedKeycapShapes[i] || 'default';
-        const shapeInfo = KEYCAP_OPTIONS[shapeName];
+for (let i = 0; i < selectedKeycapShapes.length; i++) {
+    const shapeName = selectedKeycapShapes[i] || 'default';
+    const shapeInfo = KEYCAP_OPTIONS[shapeName];
 
-        if (!shapeInfo) continue;
+    if (!shapeInfo) continue;
 
-        keycapShapePrice += Number(shapeInfo.price) || 0;
+    // 7번 전용 키캡은 7번 슬롯(slot 6)에서만 가격 적용
+    const isSlot7OnlyKeycap = [
+        'cap_gift_7',
+        'cap_santa_7',
+        'cap_santa_w_7'
+    ].includes(shapeName);
+
+    if (isSlot7OnlyKeycap && i !== 6) {
+        continue;
     }
+
+    keycapShapePrice += Number(shapeInfo.price) || 0;
+}
 
     // 최종 금액
     const totalPrice =
