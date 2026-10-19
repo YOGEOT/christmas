@@ -125,10 +125,165 @@
 
 
 @media (max-width: 760px) {
-      .app { grid-template-columns: 1fr; }
-      #canvas-container { min-height: 48vh; height: 48vh; }
-      .panel { max-height: none; border-left: 0; border-top: 1px solid #e5e5e5; padding: 18px; }
+    #keycapShapeOptions {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
+
+    #keycapShapeOptions::-webkit-scrollbar {
+        display: none;
+    }
+
+    #keycapShapeOptions .option-card {
+        flex: 0 0 150px;
+    }
+}
+
+
+/* =========================================
+   모바일 옵션 가로 탭
+========================================= */
+
+.mobile-option-tabs {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .app {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #canvas-container {
+        width: 100%;
+        min-height: 42vh;
+        height: 42vh;
+        flex: 0 0 42vh;
+    }
+
+    .panel {
+        width: 100%;
+        max-height: none;
+        min-width: 0;
+        padding: 16px;
+        overflow: visible;
+        border-left: none;
+    }
+
+    .mobile-option-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+        margin: 0 0 20px;
+        padding: 0 0 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .mobile-option-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mobile-option-tab {
+        flex: 0 0 auto;
+        padding: 10px 13px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: #fff;
+        color: #555;
+        font-size: 13px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .mobile-option-tab.active {
+        border-color: #222;
+        background: #222;
+        color: #fff;
+    }
+
+    .panel > .section.mobile-section-hidden {
+        display: none !important;
+    }
+
+    .panel > .section.mobile-section-active {
+        display: block !important;
+    }
+}
+
+/* PC에서는 기존 옵션 배치 유지 */
+@media (min-width: 901px) {
+    .mobile-option-tabs {
+        display: none !important;
+    }
+}
+
+
+/* PC에서는 탭을 표시하지 않고 기존 레이아웃 유지 */
+.mobile-option-tabs {
+    display: none;
+}
+
+@media screen and (max-width: 760px) {
+    .mobile-option-tabs {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        padding: 0 0 10px;
+        margin: 0 0 20px;
+        border-bottom: 1px solid #eee;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .mobile-option-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mobile-option-tab {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: #fff;
+        color: #444;
+        font-size: 13px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .mobile-option-tab.active {
+        background: #222;
+        color: #fff;
+        border-color: #222;
+    }
+
+    .panel > .section.mobile-section-hidden {
+        display: none !important;
+    }
+
+    .panel > .section.mobile-section-active {
+        display: block !important;
+    }
+}
+
   
 </style>
 
@@ -147,10 +302,18 @@
   <main class="app">
     <div id="canvas-container" aria-label="3D 제품 미리보기"></div>
 
-    <aside class="panel">
-      <header>
-        <h1>CHRISTMAS CUSTOM(~12/31)</h1>    
-      </header>
+    
+<aside class="panel">
+  <header>
+    <h1>CHRISTMAS CUSTOM(~12/31)</h1>
+  </header>
+
+  <!-- 모바일 전용 가로 카테고리 탭 -->
+  <nav
+    id="mobileOptionTabs"
+    class="mobile-option-tabs"
+    aria-label="옵션 카테고리">
+  </nav>
 
       
       <section class="section">
@@ -409,6 +572,97 @@
   </main>
 
   <script type="module" src="./app_cm.js"></script>
+  
+
+  
+<script>
+(() => {
+    const panel = document.querySelector('.panel');
+    const tabs = document.getElementById('mobileOptionTabs');
+
+    if (!panel || !tabs) return;
+
+    // 각 탭과 연결할 기존 옵션 섹션
+    const sections = Array.from(
+        panel.querySelectorAll(':scope > .section')
+    );
+
+    const categories = sections
+        .map((section, index) => {
+            const heading = section.querySelector('.section-title');
+
+            if (!heading) return null;
+
+            return {
+                section,
+                index,
+                title: heading.textContent.trim()
+            };
+        })
+        .filter(Boolean);
+
+    if (!categories.length) return;
+
+    let activeIndex = 0;
+
+    categories.forEach((category, index) => {
+        const button = document.createElement('button');
+
+        button.type = 'button';
+        button.className = 'mobile-option-tab';
+        button.textContent = category.title;
+
+        button.addEventListener('click', () => {
+            activeIndex = index;
+            updateTabs();
+        });
+
+        tabs.appendChild(button);
+    });
+
+    function updateTabs() {
+        const isMobile = window.matchMedia(
+            '(max-width: 900px)'
+        ).matches;
+
+        const buttons = tabs.querySelectorAll(
+            '.mobile-option-tab'
+        );
+
+        categories.forEach((category, index) => {
+            const isActive = index === activeIndex;
+
+            buttons[index].classList.toggle(
+                'active',
+                isActive
+            );
+
+            if (isMobile) {
+                category.section.classList.toggle(
+                    'mobile-section-active',
+                    isActive
+                );
+
+                category.section.classList.toggle(
+                    'mobile-section-hidden',
+                    !isActive
+                );
+            } else {
+                category.section.classList.remove(
+                    'mobile-section-active',
+                    'mobile-section-hidden'
+                );
+            }
+        });
+    }
+
+    updateTabs();
+
+    window.addEventListener('resize', updateTabs);
+})();
+</script>
+
+  
 </body>
 </html>
 
