@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FOMORA CUSTOM</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; min-height: 100%; font-family: Arial, "Noto Sans KR", sans-serif; color: #222; }
+    body { background: #f4f4f4; }
+    .app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: 100vh; }
+    #canvas-container { position: relative; min-height: 100vh; overflow: hidden; background: #f4f4f4; }
+    #canvas-container canvas { display: block; width: 100%; height: 100%; }
+    .panel { padding: 22px; background: #fff; border-left: 1px solid #e5e5e5; overflow-y: auto; max-height: 100vh; }
+    h1 { font-size: 22px; margin: 0 0 6px; }
+    .subtitle { margin: 0 0 24px; font-size: 12px; color: #888; }
+    .section { margin: 0 0 24px; }
+    .section-title { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
+    .option-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .option-card { position: relative; min-height: 68px; padding: 12px 10px; border: 1px solid #ddd; border-radius: 10px; background: #fff; text-align: left; cursor: pointer; color: #222; }
+    .option-card:hover { border-color: #999; }
+    .option-card.active { border: 2px solid #222; padding: 11px 9px; }
+    .option-name { display: block; font-size: 13px; font-weight: 600; }
+    .option-price { display: block; margin-top: 5px; font-size: 12px; color: #888; }
+    .selected-slot-info { margin: 0 0 10px; font-size: 12px; color: #666; }
+    .slot-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+    .slot-button { border: 1px solid #ddd; border-radius: 8px; background: #fff; padding: 10px 0; cursor: pointer; }
+    .slot-button.active { color: #fff; background: #222; border-color: #222; }
+    .note { font-size: 12px; line-height: 1.6; color: #888; }
+    
+.price-row,
+.price-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.price-row strong {
+  font-weight: 600;
+  text-align: right;
+}
+
+.price-total {
+  margin-top: 8px;
+  padding: 16px 0;
+  border-bottom: none;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.price-total strong {
+  font-size: 20px;
+}
+
+
+/* 축 선택: 세로 리스트 */
+#switchOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#switchOptions .option-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 14px;
+    text-align: left;
+}
+
+#switchOptions .option-card.active {
+    padding: 11px 13px;
+}
+
+#switchOptions .option-price {
+    margin-top: 0;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+
+
+/* 키캡 동그란 컬러 카드 */
+.keycap-color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.keycap-color-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 4px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.keycap-color-card.active {
+    border-color: #222;
+    background: #f8f8f8;
+}
+
+.keycap-color-circle {
+    display: block;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.keycap-color-name {
+    font-size: 12px;
+    color: #444;
+}
+
+
+
+@media (max-width: 760px) {
+      .app { grid-template-columns: 1fr; }
+      #canvas-container { min-height: 48vh; height: 48vh; }
+      .panel { max-height: none; border-left: 0; border-top: 1px solid #e5e5e5; padding: 18px; }
+    }
+  
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+
+
+</head>
+<body>
+  <main class="app">
+    <div id="canvas-container" aria-label="3D 제품 미리보기"></div>
+
+    <aside class="panel">
+      <header>
+        <h1>CHRISTMAS CUSTOM(~12/31)</h1>    
+      </header>
+
+      
+      <section class="section">
+        <h2 class="section-title">케이스 선택</h2>
+        <div class="option-grid">
+          <button class="option-card active" type="button" data-base="cm_case.glb" onclick="window.selectBase(this)">
+            <span class="option-name">베이직</span><span class="option-price">₩26,000</span>
+          </button>
+          
+        </div>
+      </section>
+
+
+      
+<!-- 키캡 모양 선택 -->
+<section class="section" id="keycapShapeSection">
+    <h2 class="section-title">키캡 모양 선택</h2>
+
+    <div class="option-grid" id="keycapShapeOptions">
+
+        <button
+            class="option-card active"
+            type="button"
+            data-keycap-shape="default">
+            <span class="option-name">기본 키캡</span>
+        </button>
+
+        <button
+            class="option-card"
+            type="button"
+            data-keycap-shape="cap_gift">
+            <span class="option-name">선물 키캡(1회선택가능)</span>
+        </button>
+
+        <button
+            class="option-card"
+            type="button"
+            data-keycap-shape="cap_santa_7">
+            <span class="option-name">산타 키캡(굴뚝전용)</span>
+        </button>
+
+        <button
+            class="option-card"
+            type="button"
+            data-keycap-shape="cap_santa_w_7">
+            <span class="option-name">산타 키캡W(굴뚝전용)</span>
+        </button>        
+
+    </div>
+</section>
+
+
+      
+
+
+
+
+<section class="section" id="keycapColorSection">
+    <h2 class="section-title">키캡 색상</h2>
+
+    <div class="keycap-color-grid">
+
+        <button
+    class="keycap-color-card"
+    type="button"
+    data-keycap-color="#ffffff"
+    aria-label="화이트"
+    title="화이트"
+    onclick="window.changeKeycapColor('#ffffff', this)">
+    <span
+        class="keycap-color-circle"
+        style="background-color: #ffffff;">
+    </span>
+</button>
+
+<button
+    class="keycap-color-card"
+    type="button"
+    data-keycap-color="#694822"
+    aria-label="브라운"
+    title="브라운"
+    onclick="window.changeKeycapColor('#7B543B', this)">
+    <span
+        class="keycap-color-circle"
+        style="background-color: #7B543B;">
+    </span>
+</button>
+
+        
+
+    </div>
+</section>
+
+
+ <section class="section" id="allKeycapColorSection">
+    <h2 class="section-title">전체 키캡 색상</h2>
+
+    <div class="keycap-color-grid">
+
+        <button
+            class="keycap-color-card"
+            type="button"
+            data-all-keycap-color="#ffffff"
+            aria-label="화이트"
+            title="화이트"
+            onclick="window.selectAllKeycapColor('#ffffff', this)">
+            <span class="keycap-color-circle"
+                  style="background-color: #FFFFFF;"></span>
+        </button>
+
+        <button
+            class="keycap-color-card"
+            type="button"
+            data-all-keycap-color="pink"
+            aria-label="핑크"
+            title="핑크"
+            onclick="window.selectAllKeycapColor('#7B543B', this)">
+            <span class="keycap-color-circle"
+                  style="background-color: #7B543B;"></span>
+        </button>
+
+        
+    </div>
+</section>
+
+
+
+
+
+
+
+      <section class="section">
+
+        <h2 class="section-title">파츠 선택</h2>
+
+        <div class="option-grid">
+
+
+          <button class="option-card active" type="button" data-part="all-none" onclick="window.selectPart('all-none')">
+            <span class="option-name">전체제거</span><span class="option-price">-</span></button>
+
+            <button class="option-card active" type="button" data-part="none" onclick="window.selectPart('none')">
+            <span class="option-name">선택제거</span><span class="option-price">-</span></button>
+
+
+          <button class="option-card" type="button" data-part="snow" onclick="window.selectPart('snow')">
+            <span class="option-name">스노우</span><span class="option-price">+1,000</span></button>
+
+
+          <button class="option-card" type="button" data-part="star" onclick="window.selectPart('star')">
+            <span class="option-name">별</span><span class="option-price">+1,000</span></button>
+
+
+          <button class="option-card" type="button" data-part="tree" onclick="window.selectPart('tree')">
+            <span class="option-name">트리</span><span class="option-price">+1,000</span></button>
+
+
+          <button class="option-card" type="button" data-part="ginger" onclick="window.selectPart('ginger')">
+            <span class="option-name">진저쿠키</span><span class="option-price">+1,000</span></button>
+
+         
+        </div>
+
+              
+    </section>
+
+
+
+     
+
+
+      
+
+  <!-- 축 선택 -->
+<section class="section" id="switchOptionsSection">
+    <h2 class="section-title">축 선택</h2>
+
+    <div class="option-grid" id="switchOptions">
+
+        <button class="option-card active"
+                type="button"
+                data-switch="blue"
+                onclick="window.selectSwitch('blue', this)">
+            <span class="option-name">청축</span>
+            <span class="option-price">0원</span>
+        </button>        
+
+        <button class="option-card"
+                type="button"
+                data-switch="gangbaek"
+                onclick="window.selectSwitch('gangbaek', this)">
+            <span class="option-name">강백축</span>
+            <span class="option-price">0원</span>
+        </button>        
+
+        <button class="option-card"
+                type="button"
+                data-switch="strawberry_latte"
+                onclick="window.selectSwitch('strawberry_latte', this)">
+            <span class="option-name">딸기라떼축</span>
+            <span class="option-price">0원</span>
+        </button>
+
+        <button class="option-card"
+                type="button"
+                data-switch="seasalt"
+                onclick="window.selectSwitch('seasalt', this)">
+            <span class="option-name">바다소금축</span>
+            <span class="option-price">0원</span>
+        </button>               
+
+        <button class="option-card"
+                type="button"
+                data-switch="pinksalt"
+                onclick="window.selectSwitch('pinksalt', this)">
+            <span class="option-name">저소음핑크솔트축</span>
+            <span class="option-price">0원</span>
+        </button>
+
+    </div>
+</section>
+
+<section class="section" id="priceSummarySection">
+  <h2 class="section-title">총금액 정산</h2>
+
+  <div class="price-row">
+    <span>베이스</span>
+    <strong id="basePrice">26,000원</strong>
+  </div>
+
+  
+<div class="price-row">
+    <span>키캡</span>
+    <span id="keycapPrice">2,000원</span>
+</div>
+ 
+
+  <div class="price-row">
+    <span>파츠 및 토핑</span>
+    <strong id="partPrice">0원</strong>
+  </div>
+
+  <div class="price-row">
+    <span>스위치</span>
+    <strong id="switchPrice">-</strong>
+  </div>
+
+  <div class="price-total">
+    <span>총 결제 금액</span>
+    <strong id="totalPrice">26,000원</strong>
+  </div>
+</section>
+
+
+    </aside>
+  </main>
+
+  <script type="module" src="./app_cm.js"></script>
+</body>
+</html>
+
+
