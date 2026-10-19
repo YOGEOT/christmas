@@ -1322,21 +1322,32 @@ function applyBaseColor() {
 // Keycap 색상
 // ============================================================
 
-function applyKeycapColorToModel(
-    model,
-    color
-) {
 
-    if (!model)
+function applyKeycapColorToModel(model, color) {
+    if (!model) return;
+
+    // 현재 모델이 어떤 슬롯의 키캡인지 확인
+    const slot = capModels.indexOf(model);
+
+    if (slot < 0) return;
+
+    const shapeName = selectedKeycapShapes[slot] || 'default';
+
+    // Blender 원본 색상을 유지해야 하는 키캡
+    const keepOriginalColorShapes = [
+        'cap_gift',
+        'cap_gift_7',
+        'cap_santa_7',
+        'cap_santa_w_7'
+    ];
+
+    if (keepOriginalColorShapes.includes(shapeName)) {
         return;
+    }
 
-
-    applyCommonMaterial(
-        model,
-        color
-    );
-
+    applyCommonMaterial(model, color);
 }
+
 
 
 
