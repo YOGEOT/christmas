@@ -289,15 +289,19 @@
    기존 PC 레이아웃은 유지
 ========================================= */
 
+/* =========================================
+   모바일: 모든 옵션 탭 내부 목록 스크롤
+   ========================================= */
+
 @media screen and (max-width: 900px) {
 
-    #partsSection.mobile-section-active #partsOptions {
-        max-height: 40vh;
+    .panel > .section.mobile-section-active {
+        max-height: 48vh;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
-        padding: 2px 4px 8px 2px;
+        padding-bottom: 12px;
     }
 
 }
