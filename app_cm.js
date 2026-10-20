@@ -147,13 +147,13 @@ const PARTS = {
     snow: {
         file: './model/snow.glb',
         name: '스노우',
-        price: 1000
+        price: 800
     },
 
     star: {
         file: './model/star.glb',
         name: '별',
-        price: 1000
+        price: 800
     },
 
     tree: {
@@ -165,6 +165,12 @@ const PARTS = {
     ginger: {
         file: './model/ginger.glb',
         name: '진저쿠키',
+        price: 1000
+    },
+
+    stick: {
+        file: './model/stick.glb',
+        name: '지팡이',
         price: 1000
     },
 
@@ -1670,13 +1676,40 @@ function createCapOutline(model) {
         });
 
         // 원본 지오메트리를 복제해 별도로 관리
-        const outline = new THREE.Mesh(
-            mesh.geometry.clone(),
-            material
-        );
+       
+const geometry = mesh.geometry.clone();
 
-        // 외곽선 두께
-        outline.scale.setScalar(1.04);
+// 정점 법선을 계산합니다.
+geometry.computeVertexNormals();
+
+const positions = geometry.attributes.position;
+const normals = geometry.attributes.normal;
+
+// 원본 메시의 크기에 비례해 정점을 바깥쪽으로 이동합니다.
+const box = new THREE.Box3().setFromBufferAttribute(positions);
+const size = box.getSize(new THREE.Vector3());
+const offset = Math.max(
+    Math.max(size.x, size.y, size.z) * 0.02,
+    0.02
+);
+
+for (let i = 0; i < positions.count; i++) {
+    positions.setXYZ(
+        i,
+        positions.getX(i) + normals.getX(i) * offset,
+        positions.getY(i) + normals.getY(i) * offset,
+        positions.getZ(i) + normals.getZ(i) * offset
+    );
+}
+
+positions.needsUpdate = true;
+geometry.computeBoundingSphere();
+
+const outline = new THREE.Mesh(geometry, material);
+
+// 확대 배율 대신 정점을 바깥쪽으로 이동합니다.
+outline.scale.set(1, 1, 1);
+
 
         outline.visible = false;
         outline.renderOrder = 2;
@@ -3523,7 +3556,7 @@ const THUMBNAIL_ROTATIONS = {
    파츠 옵션 카드 GLB 썸네일 (개선된 버전)
 ============================================================ */
 
-const THUMBNAIL_CACHE_VERSION = 'thumb-v4';
+const THUMBNAIL_CACHE_VERSION = 'thumb-v5';
 const THUMBNAIL_DB_NAME = 'FOMORA_ThumbnailDB';
 const THUMBNAIL_STORE_NAME = 'thumbnails';
 
