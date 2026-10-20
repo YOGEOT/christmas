@@ -289,21 +289,26 @@
    모바일: 모든 옵션 탭 내부 목록 스크롤
    ========================================= */
 
+
 /* =========================================
-   모바일: 모든 옵션 목록만 개별 스크롤
+   모바일: 옵션 목록만 내부 스크롤
 ========================================= */
 
 @media screen and (max-width: 900px) {
 
-    /* 활성 탭의 섹션 자체는 스크롤하지 않음 */
+    /* 옵션 목록을 제외한 섹션은 스크롤하지 않음 */
     .panel > .section.mobile-section-active {
         max-height: none;
         overflow: visible;
+        min-height: 0;
     }
 
-    /* 각 옵션 카드 목록에만 세로 스크롤 적용 */
-    .panel > .section.mobile-section-active .option-grid,
-    .panel > .section.mobile-section-active .keycap-color-grid {
+    /* 세로형 옵션 카드 목록 */
+    .panel > .section.mobile-section-active
+    .option-grid:not(#keycapShapeOptions),
+    .panel > .section.mobile-section-active
+    .keycap-color-grid {
+        height: 40vh;
         max-height: 40vh;
         overflow-y: auto;
         overflow-x: hidden;
@@ -311,19 +316,47 @@
         overscroll-behavior-y: contain;
         align-content: start;
         padding: 2px 4px 8px 2px;
+        touch-action: pan-y;
     }
 
-    /* 키캡 모양은 기존 가로 배치를 유지 */
+    /* 키캡 모양 목록은 기존 가로 스크롤 유지 */
     #keycapShapeOptions {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        height: auto;
+        max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
-        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
     }
 
     #keycapShapeOptions .option-card {
         flex: 0 0 150px;
     }
+
+    /* 축 선택 목록도 세로 스크롤 */
+    #switchOptions {
+        display: flex;
+        flex-direction: column;
+        height: 40vh;
+        max-height: 40vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
+    }
+
+    /* 총 금액 섹션은 기존 표시 유지 */
+    #priceSummarySection {
+        max-height: none;
+        overflow: visible;
+    }
 }
+
   
 </style>
 
