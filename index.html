@@ -285,45 +285,67 @@
 }
 
 
-/* =========================================
-   모바일: 모든 옵션 탭 내부 목록 스크롤
-   ========================================= */
-
 
 
 /* =========================================
-   모바일: 옵션 목록 내부 스크롤
-   기존 레이아웃 유지
+   모바일 스크롤 복원
+   기존 버전의 패널 스크롤 방식 적용
 ========================================= */
 
 @media screen and (max-width: 900px) {
 
-    /* 파츠 목록과 축 목록 */
-    #partsOptions,
-    #switchOptions {
-        max-height: 40vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
+    /* 화면 전체를 뷰어와 옵션 패널 안에 고정 */
+    .app {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
     }
 
-    /* 키캡 색상 및 전체 키캡 색상 */
-    #keycapColorSection .keycap-color-grid,
-    #allKeycapColorSection .keycap-color-grid {
-        max-height: 40vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
+    /* 위쪽 3D 미리보기 */
+    #canvas-container {
+        width: 100%;
+        height: 42vh;
+        min-height: 0;
+        flex: 0 0 42vh;
+        overflow: hidden;
     }
 
-    /* 키캡 모양: 기존 가로 스크롤 유지 */
-    #keycapShapeOptions {
+    /* 핵심: 옵션 패널 자체에서 스크롤 */
+    .panel {
+        position: relative;
+        display: block;
+        flex: 1 1 0;
+        width: 100%;
+        height: 0;
+        min-height: 0;
         max-height: none;
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
         -webkit-overflow-scrolling: touch;
+        padding: 16px;
+        border-left: none;
+    }
+
+    /* 탭은 패널 상단에 붙여 둠 */
+    .mobile-option-tabs {
+        position: sticky;
+        top: -16px;
+        z-index: 20;
+        background: #fff;
+    }
+
+    /* 선택된 카테고리만 표시 */
+    .panel > .section.mobile-section-hidden {
+        display: none !important;
+    }
+
+    .panel > .section.mobile-section-active {
+        display: block !important;
     }
 }
 
