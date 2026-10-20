@@ -284,26 +284,45 @@
     }
 }
 
-/* =========================================
-   모바일: 파츠 목록만 세로 스크롤
-   기존 PC 레이아웃은 유지
-========================================= */
 
 /* =========================================
    모바일: 모든 옵션 탭 내부 목록 스크롤
    ========================================= */
 
+/* =========================================
+   모바일: 모든 옵션 목록만 개별 스크롤
+========================================= */
+
 @media screen and (max-width: 900px) {
 
+    /* 활성 탭의 섹션 자체는 스크롤하지 않음 */
     .panel > .section.mobile-section-active {
-        max-height: 48vh;
+        max-height: none;
+        overflow: visible;
+    }
+
+    /* 각 옵션 카드 목록에만 세로 스크롤 적용 */
+    .panel > .section.mobile-section-active .option-grid,
+    .panel > .section.mobile-section-active .keycap-color-grid {
+        max-height: 40vh;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
-        padding-bottom: 12px;
+        align-content: start;
+        padding: 2px 4px 8px 2px;
     }
 
+    /* 키캡 모양은 기존 가로 배치를 유지 */
+    #keycapShapeOptions {
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+    }
+
+    #keycapShapeOptions .option-card {
+        flex: 0 0 150px;
+    }
 }
   
 </style>
