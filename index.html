@@ -290,18 +290,25 @@
    ========================================= */
 
 
+
 /* =========================================
    모바일: 옵션 목록 내부 스크롤
-   기존 화면 레이아웃 유지
+   기존 레이아웃 유지
 ========================================= */
 
 @media screen and (max-width: 900px) {
 
-    /* 파츠 목록과 동일하게 세로 스크롤 */
+    /* 파츠 목록과 축 목록 */
     #partsOptions,
-    #switchOptions,
-    #keycapColorSection .option-grid,
-    #allKeycapColorSection .option-grid,
+    #switchOptions {
+        max-height: 40vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+
+    /* 키캡 색상 및 전체 키캡 색상 */
     #keycapColorSection .keycap-color-grid,
     #allKeycapColorSection .keycap-color-grid {
         max-height: 40vh;
@@ -309,18 +316,17 @@
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
-        touch-action: pan-y;
     }
 
-    /* 키캡 모양 목록은 기존 가로 배치 유지 */
+    /* 키캡 모양: 기존 가로 스크롤 유지 */
     #keycapShapeOptions {
         max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        touch-action: pan-x;
     }
 }
+
 
   
 </style>
