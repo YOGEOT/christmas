@@ -291,129 +291,34 @@
 
 
 /* =========================================
-   모바일: 옵션 목록만 내부 스크롤
+   모바일: 옵션 목록 내부 스크롤
+   기존 화면 레이아웃 유지
 ========================================= */
 
 @media screen and (max-width: 900px) {
 
-    /* 화면 전체를 뷰어와 옵션 패널로 나눔 */
-    .app {
-        height: 100vh;
-        height: 100dvh;
-        min-height: 0;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* 제품 미리보기 영역 */
-    #canvas-container {
-        height: 42vh;
-        min-height: 0;
-        flex: 0 0 42vh;
-        overflow: hidden;
-    }
-
-    /* 옵션 패널 자체는 스크롤하지 않음 */
-    .panel {
-        height: 58vh;
-        max-height: 58vh;
-        min-height: 0;
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    /* 상단 제목과 카테고리 탭은 고정 */
-    .panel > h1,
-    #mobileOptionTabs {
-        flex: 0 0 auto;
-    }
-
-    #mobileOptionTabs {
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* 선택한 카테고리만 패널 안에 표시 */
-    .panel > .section.mobile-section-hidden {
-        display: none !important;
-    }
-
-    .panel > .section.mobile-section-active {
-        display: flex !important;
-        flex: 1 1 0;
-        flex-direction: column;
-        min-height: 0;
-        max-height: none;
-        overflow: hidden;
-    }
-
-    /* 섹션 제목은 스크롤되지 않도록 유지 */
-    .mobile-section-active > .section-title {
-        flex: 0 0 auto;
-    }
-
-    /* 옵션 목록은 남은 공간을 사용하며 세로 스크롤 */
-    .mobile-section-active > :not(.section-title) {
-        min-height: 0;
-    }
-
-    .mobile-section-active .option-grid:not(#keycapShapeOptions),
-    .mobile-section-active .keycap-color-grid,
-    .mobile-section-active .color-grid {
-        flex: 1 1 0;
-        min-height: 0;
-        height: auto;
-        max-height: none;
-        overflow-x: hidden;
+    /* 파츠 목록과 동일하게 세로 스크롤 */
+    #partsOptions,
+    #switchOptions,
+    #keycapColorSection .option-grid,
+    #allKeycapColorSection .option-grid,
+    #keycapColorSection .keycap-color-grid,
+    #allKeycapColorSection .keycap-color-grid {
+        max-height: 40vh;
         overflow-y: auto;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
         touch-action: pan-y;
-        align-content: start;
-        padding: 2px 4px 8px 2px;
     }
 
-    /* 키캡 모양 목록은 가로 스크롤 */
+    /* 키캡 모양 목록은 기존 가로 배치 유지 */
     #keycapShapeOptions {
-        display: flex;
-        flex: 0 0 auto;
-        flex-wrap: nowrap;
-        height: auto;
         max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior-x: contain;
         touch-action: pan-x;
-    }
-
-    #keycapShapeOptions .option-card {
-        flex: 0 0 150px;
-    }
-
-    /* 축 목록은 세로 스크롤 */
-    #switchOptions {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 0;
-        min-height: 0;
-        height: auto;
-        max-height: none;
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-    }
-
-    /* 가격 요약은 내용이 길 때 내부 스크롤 */
-    #priceSummarySection.mobile-section-active {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
     }
 }
 
