@@ -1835,6 +1835,22 @@ function createToppingUI() {
     const panel = document.createElement('section');
     panel.id = 'fomora-topping-panel';
 
+    // 토핑 기능은 유지하고 화면에서만 숨깁니다.
+if (!document.getElementById('hide-topping-panel-style')) {
+
+    const hideStyle = document.createElement('style');
+
+    hideStyle.id = 'hide-topping-panel-style';
+
+    hideStyle.textContent = `
+        #fomora-topping-panel {
+            display: none !important;
+        }
+    `;
+
+    document.head.appendChild(hideStyle);
+}
+
     panel.innerHTML = `
         <h3 class="topping-title">토핑(와플,마카롱)</h3>
 
