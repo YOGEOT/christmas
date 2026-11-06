@@ -223,10 +223,16 @@ const KEYCAP_OPTIONS = {
     price: 2000
     },
 
-    yakgwa: {
-        name: '약과 키캡',
-        file: './cap_yakgwa.glb',
-        price: 1000
+    cap_tree: {
+        name: '트리 키캡',
+        file: './cap_tree.glb',
+        price: 2000
+    },
+
+    cap_tree_w: {
+        name: '트리 키캡W',
+        file: './cap_tree_w.glb',
+        price: 2000
     },
 };
 
@@ -1029,7 +1035,8 @@ function(element) {
 
 
 function getKeycapModelPath(shapeName, slot, defaultPath) {
-       // 7번 전용 산타 키캡 2종
+
+    // 7번 전용 산타 키캡 2종
     if (
         shapeName === 'cap_santa_7' ||
         shapeName === 'cap_santa_w_7'
@@ -1048,6 +1055,20 @@ function getKeycapModelPath(shapeName, slot, defaultPath) {
         return slot === 6
             ? './cap_gift_7.glb'
             : './cap_gift.glb';
+    }
+
+    // 7번 전용 트리 키캡 2종
+    if (
+        shapeName === 'cap_tree' ||
+        shapeName === 'cap_tree_w'
+    ) {
+        if (slot !== 6) {
+            return DEFAULT_CAP_FILES[slot];
+        }
+
+        return shapeName === 'cap_tree_w'
+            ? './cap_tree_w.glb'
+            : './cap_tree.glb';
     }
 
     return defaultPath;
@@ -1344,7 +1365,8 @@ function applyKeycapColorToModel(model, color) {
         'cap_gift',
         'cap_gift_7',
         'cap_santa_7',
-        'cap_santa_w_7'
+        'cap_santa_w_7',
+        'cap_tree',
     ];
 
     if (keepOriginalColorShapes.includes(shapeName)) {
