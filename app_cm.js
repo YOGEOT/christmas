@@ -234,6 +234,19 @@ const KEYCAP_OPTIONS = {
         file: './cap_tree_w.glb',
         price: 2000
     },
+
+    cap_snow: {
+        name: '스노우 키캡',
+        file: './cap_snow.glb',
+        price: 2000
+    },
+
+    cap_snow_w: {
+        name: '스노우 키캡W',
+        file: './cap_snow_w.glb',
+        price: 2000
+    },
+
 };
 
 
@@ -1050,7 +1063,7 @@ function getKeycapModelPath(shapeName, slot, defaultPath) {
             : './cap_santa_7.glb';
     }
 
-    // 기존 선물 키캡 경로 유지
+    // 기존 선물 키캡
     if (shapeName === 'cap_gift' || shapeName === 'cap_gift_7') {
         return slot === 6
             ? './cap_gift_7.glb'
@@ -1069,6 +1082,20 @@ function getKeycapModelPath(shapeName, slot, defaultPath) {
         return shapeName === 'cap_tree_w'
             ? './cap_tree_w.glb'
             : './cap_tree.glb';
+    }
+
+    // 7번 전용 눈꽃 키캡 2종
+    if (
+        shapeName === 'cap_snow' ||
+        shapeName === 'cap_snow_w'
+    ) {
+        if (slot !== 6) {
+            return DEFAULT_CAP_FILES[slot];
+        }
+
+        return shapeName === 'cap_snow_w'
+            ? './cap_snow_w.glb'
+            : './cap_snow.glb';
     }
 
     return defaultPath;
@@ -1367,6 +1394,9 @@ function applyKeycapColorToModel(model, color) {
         'cap_santa_7',
         'cap_santa_w_7',
         'cap_tree',
+        'cap_tree_w',
+        'cap_snow',
+        'cap_snow_w',
     ];
 
     if (keepOriginalColorShapes.includes(shapeName)) {
@@ -3353,16 +3383,21 @@ for (let i = 0; i < selectedKeycapShapes.length; i++) {
 
     if (!shapeInfo) continue;
 
-    // 7번 전용 키캡은 7번 슬롯(slot 6)에서만 가격 적용
-    const isSlot7OnlyKeycap = [
-        'cap_gift_7',
-        'cap_santa_7',
-        'cap_santa_w_7'
-    ].includes(shapeName);
+    // 7번 전용 키캡 목록
+const isSlot7OnlyKeycap = [
+    'cap_gift_7',
+    'cap_santa_7',
+    'cap_santa_w_7',
+    'cap_tree',
+    'cap_tree_w',
+    'cap_snow',
+    'cap_snow_w'
+].includes(shapeName);
 
-    if (isSlot7OnlyKeycap && i !== 6) {
-        continue;
-    }
+// 7번 슬롯이 아니면 추가금 계산에서 제외
+if (isSlot7OnlyKeycap && i !== 6) {
+    continue;
+}
 
     keycapShapePrice += Number(shapeInfo.price) || 0;
 }
