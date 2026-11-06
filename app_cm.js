@@ -174,6 +174,12 @@ const PARTS = {
         price: 1000
     },
 
+    socks: {
+        file: './model/socks.glb',
+        name: '양말',
+        price: 1000
+    },
+
     
       
 
