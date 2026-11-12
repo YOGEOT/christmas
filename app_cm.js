@@ -180,6 +180,12 @@ const PARTS = {
         price: 1000
     },
 
+    wreath: {
+        file: './model/wreath.glb',
+        name: ' wreath',
+        price: 1500
+    },
+
     
       
 
